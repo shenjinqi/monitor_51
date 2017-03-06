@@ -18,8 +18,12 @@ keyword = "FP&A"
 keywordcode = urllib.quote(keyword)
 
 is_start_page = True
+keyword_idx = 0
+keyowrds_list = ["FP&A", "python", "C++11", "volte", "LTE"]
 
 class TestfollowSpider(scrapy.Spider):
+    global keyword_idx, keyowrds_list
+    keywordcode = urllib.quote(keyowrds_list[keyword_idx])
    
     name = "monitor_51"
     allowed_domains = ["51job.com"]
@@ -43,6 +47,7 @@ class TestfollowSpider(scrapy.Spider):
         
 
     def parse_dir_contents(self, response):
+        global keyword_idx, keyowrds_list
         #print "---------------"
         # print response.xpath('//div[@id="resultList"]')
         for sel in response.xpath('//div[@id="resultList"]/div[@class="el"]'):
@@ -78,3 +83,12 @@ class TestfollowSpider(scrapy.Spider):
         if next_page:
             url = response.urljoin(next_page[0])
             yield scrapy.Request(url, self.parse_dir_contents)
+        else:
+            keyword_idx += 1
+            if keyword_idx < len(keyowrds_list):
+                keywordcode = urllib.quote(keyowrds_list[keyword_idx])
+                start_urls_of_next_keyword = [
+            "http://search.51job.com/jobsearch/search_result.php?fromJs=1&jobarea=020000%2C00&funtype=0000&industrytype=00&keyword=" + keywordcode,
+                ]
+                url = start_urls_of_next_keyword[0]
+                yield scrapy.Request(url, callback=self.parse_dir_contents)

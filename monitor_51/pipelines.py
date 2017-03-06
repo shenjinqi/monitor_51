@@ -65,7 +65,7 @@ class Monitor51MongoDBPipeline(BaseItemExporter):
         'database': 'scrapy-mongodb-51job',
         'collection': 'items',
         'replica_set': None,
-        'unique_key': None,
+        'unique_key': None,#['company', 'title', 'salary'],
         'buffer': None,
         'append_timestamp': False,
         'stop_on_duplicate': 0,
@@ -114,11 +114,13 @@ class Monitor51MongoDBPipeline(BaseItemExporter):
             self.config['database'],
             self.config['collection']))
 
-        # Ensure unique index
+        # Ensure unique index, shenjinqi: deprecated
         if self.config['unique_key']:
+            print self.collection
             self.collection.ensure_index(self.config['unique_key'], unique=True)
             log.msg(u'Ensuring index for key {0}'.format(
                 self.config['unique_key']))
+
 
         # Get the duplicate on key option
         if self.config['stop_on_duplicate']:
@@ -258,9 +260,15 @@ class Monitor51MongoDBPipeline(BaseItemExporter):
 
         if self.config['unique_key'] is None:
             try:
-                self.collection.insert(item, continue_on_error=True)
+                # update date only
+                filters = ['company', 'title', 'salary']
+                key = {}
+                for k in filters:
+                    key[k] = item[k]
+                self.collection.update(key, item, upsert=True)
+                # self.collection.insert(item, continue_on_error=True)
                 log.msg(
-                    u'Insert item(s) in MongoDB {0}/{1}/{2}'.format(
+                    u'Update item(s) in MongoDB {0}/{1}/{2}'.format(
                         self.config['database'], self.config['collection'], item),
                     level=log.DEBUG,
                     spider=spider)
@@ -286,7 +294,7 @@ class Monitor51MongoDBPipeline(BaseItemExporter):
             self.collection.update(key, item, upsert=True)
 
             log.msg(
-                u'Update item(s) in MongoDB {0}/{1}'.format(
+                u'Not in this Update item(s) in MongoDB {0}/{1}'.format(
                     self.config['database'], self.config['collection']),
                 level=log.DEBUG,
                 spider=spider)

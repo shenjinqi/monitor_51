@@ -13,7 +13,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-keyword = "Python"
+keyword = "FP&A"
 #把字符串编码成符合url规范的编码
 keywordcode = urllib.quote(keyword)
 
@@ -53,6 +53,7 @@ class TestfollowSpider(scrapy.Spider):
             title = sel.xpath('.//p/span/a/text()').extract()[0].strip()
             company = sel.xpath('./span/a/text()').extract()[0].strip() 
             len_more = len(sel.xpath('./span/text()').extract())
+            salary = ''
             if len_more == 3:
 				location = sel.xpath('./span/text()').extract()[0].strip()
 				salary = sel.xpath('./span/text()').extract()[1].strip()
@@ -61,13 +62,14 @@ class TestfollowSpider(scrapy.Spider):
 				location = sel.xpath('./span/text()').extract()[0].strip()
 				# salary = sel.xpath('./span/text()').extract()[1].strip()
 				date = sel.xpath('./span/text()').extract()[1].strip()
-			
+
             
             item = Monitor51Item()
             item['title'] = title
             item['link'] = link
             item['company'] = company
             item['updatetime'] = date
+            item['salary'] = salary
             yield item
             #break
 

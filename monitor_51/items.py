@@ -15,4 +15,5 @@ class Monitor51Item(Item):
     link        = Field()   #详情链接
     company     = Field()   #公司名称   
     updatetime  = Field()   #更新时间
+    salary      = Field()  # 工资
     

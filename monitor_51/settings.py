@@ -66,6 +66,7 @@ ROBOTSTXT_OBEY = True
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'monitor_51.pipelines.Monitor51JsonPipeline': 300,
+    'monitor_51.pipelines.Monitor51MongoDBPipeline':800,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
